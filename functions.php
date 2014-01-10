@@ -554,26 +554,64 @@ function get_excerpt_by_id($post_id){
 }
 
 
-function guessPageType($pageID = null) {
-    global $post;
-    $id = $pageID ? $pageID : $post->ID;
-    $template = get_page_template_slug($id);
-    
-    $type = str_replace('.php', '', str_replace('page-', '', str_replace('page_discount-', '', $template)));
-    
-    return $type;
+
+
+class shopNonStop
+{
+    /**
+     * Set cookie for user gender
+     */
+    public function setGenderCookie()
+    {
+        if (isset($_GET['gender']) && ($_GET['gender'] == 'man' || $_GET['gender'] == 'woman')) {
+            setcookie('gender', $_GET['gender'],time() + (86400 * 365), '/'); // 86400 = 1 day
+        }
+    }
+
+    /**
+     * Get page gender to show custom page layout
+     */
+    public function getPageGender($post) {
+
+        if($post->post_parent == 0 ) return $post->post_name;
+
+        $post_data = get_post($post->post_parent);
+
+        while($post_data->post_parent != 0) {
+            $post_data = get_post($post_data->post_parent);
+        }
+
+        return $post_data->post_name;
+    }
+
+    /**
+     * Get page slug
+     */
+    public function getPageSlug($post) {
+        return $post->post_name;
+    }
+
+    /**
+     * Try to get gender from cookie or GET param
+     * @return string | null
+     */
+    public function getUserGender()
+    {
+        $gender = isset($_COOKIE['gender']) ? $_COOKIE['gender'] : null;
+        !$gender && isset($_GET['gender']) ? $_GET['gender'] : null;
+
+        return $gender;
+    }
+
+
+    function guessPageType($post, $pageID = null) {
+        $id = $pageID ? $pageID : $post->ID;
+        $template = get_page_template_slug($id);
+
+        $type = str_replace('.php', '', str_replace('page-', '', str_replace('page_discount-', '', $template)));
+
+        return $type;
+    }
 }
 
-function get_page_slug($parent = false) {
-    global $post;
-    
-    if($post->post_parent == 0 || !$parent ) return $post->post_name;
-    
-    $post_data = get_post($post->post_parent);
-   
-    while($post_data->post_parent != 0) {
-        $post_data = get_post($post_data->post_parent);
-    }
-    
-    return $post_data->post_name;
-}
+$shop = new shopNonStop();

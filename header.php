@@ -36,71 +36,57 @@
 	<!--[if lt IE 9]>
 	<script src="<?php echo get_template_directory_uri(); ?>/js/html5.js"></script>
 	<![endif]-->
+    <?php
+        global $shop, $post;
+
+        $shop->setGenderCookie();
+
+        if(is_front_page() && $shop->getUserGender() == 'woman')
+        {
+            header( 'Location: /woman' );
+        }
+    ?>
 	<?php wp_head(); ?>
     <link rel="shortcut icon" type="image/png" href="<?php echo get_template_directory_uri(); ?>/favicon.ico?v=1.2"/>
 </head>
-<?php 
-    $showSelect = true;
-    if (isset($_GET['gender']) && ($_GET['gender'] == 'man' || $_GET['gender'] == 'woman')) {
-        setcookie('gender', $_GET['gender'],time() + (86400 * 365), '/'); // 86400 = 1 day
-        $showSelect = false;
-    }
+<?php
 
-    $slug = get_page_slug(true);
-    $name = get_page_slug();
+    $gender = $shop->getPageGender($post);
+
+    $slug = $shop->getPageSlug($post);
+
 
     if($slug != $name) {
         $description = get_page_description();
     }
 
-    if($slug != 'dev') {
-        $showSelect = false;
-    }
-
-    if(isset($_COOKIE['gender'])) {
-        if($_COOKIE['gender'] == 'woman') {
-            $showSelect = false;
-            
-            if ($slug == 'dev') {
-                header( 'Location: /woman' ) ;
-            }
-            
-        }
-        
-    } else if (isset($_GET['gender']) && $_GET['gender'] == 'woman') {
-        $slug = "woman";
-    }
     
     function get_page_description() {
         global $post;
         
         return $post->post_content;
     }
-    
-    function getPost() {
-        global $post;
-        
-        return $post;
-    }
-    $type = guessPageType();
-    $current_page = getPost();
+
+    $type = $shop->guessPageType($post);
+    $current_page = $post;
 ?>
 <body <?php body_class(); ?>>
 	<div id="page" class="hfeed site">
-        <?php $header = ($slug == $name) ? 'header-' . $slug : 'header-' . $slug . '-' . $name; ?>
-		<header id="masthead" class="site-header <?php echo isset($header) ? $header :'';?> " role="banner">
+        <?php $header = ($gender == $slug) ? 'header-' . $gender : 'header-' . $gender . '-' . $slug; ?>
+		<header id="masthead" class="site-header <?php echo $header;?> " role="banner">
 			<a class="home-link" href="<?php echo esc_url( home_url( '/' ) ); ?><?php echo $slug == 'woman' ? '/woman' :'';?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home">
-				<?php $logo = ($slug == "woman" || $slug == "man") ? $slug : ""; ?>
+				<?php $logo = ($gender == "woman" || $gender == "man") ? $slug : ""; ?>
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/<?php echo $logo ? $logo . '-' : '';?>logo.png" />
                 <div style="float: right;"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/header-slogan.png" /></div>
 			</a>
-            <?php if ($type) : ?>
+            <?php if(($type || !is_front_page()) && function_exists('bcn_display')) : ?>
                 <div class="breadcrumbs">
-                    <?php if(function_exists('bcn_display'))
-                    {
-                        bcn_display();
-                    }?>
+                    <?php bcn_display(); ?>
                 </div>
+            <?php endif; ?>
+
+            <?php if ($type) : ?>
+
                 <?php 
                     switch($type) {
                         case 'company':
