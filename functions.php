@@ -553,9 +553,50 @@ function get_excerpt_by_id($post_id){
     return $the_excerpt;
 }
 
+// create custom plugin settings menu
+add_action('admin_menu', 'sns_create_menu');
+
+function sns_create_menu() {
+
+    //create new top-level menu
+    add_menu_page('SNS Settings', 'SNS Settings', 'administrator', __FILE__, 'baw_settings_page', '/wp-content/themes/shop-non-stop/favicon.ico');
+
+    //call register settings function
+    add_action( 'admin_init', 'register_mysettings' );
+}
 
 
+function register_mysettings() {
+    //register our settings
+    register_setting( 'baw-settings-group', 'sns_footer_text' );
+    register_setting( 'baw-settings-group', 'gaq_script' );
+}
 
+function baw_settings_page() {
+    ?>
+    <div class="wrap">
+        <h2>Shop-Non-Stop Settings</h2>
+
+        <form method="post" action="options.php">
+            <?php settings_fields( 'baw-settings-group' ); ?>
+            <?php do_settings_sections( 'baw-settings-group' ); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Footer text</th>
+                    <td><textarea style="width: 500px; height: 150px" name="sns_footer_text"><?php echo get_option('sns_footer_text'); ?></textarea></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Analytics script</th>
+                    <td><textarea style="width: 500px; height: 150px" name="gaq_script"><?php echo get_option('gaq_script'); ?></textarea></td>
+                </tr>
+            </table>
+
+            <?php submit_button(); ?>
+
+        </form>
+    </div>
+<?php }
 class shopNonStop
 {
     /**
@@ -591,6 +632,12 @@ class shopNonStop
         return $post->post_name;
     }
 
+    public function getPageTitle($post) {
+        $title = get_post_meta($post->ID, "header_page_title", true);
+
+        return $title ? $title : $post->post_title;
+    }
+
     /**
      * Try to get gender from cookie or GET param
      * @return string | null
@@ -604,6 +651,12 @@ class shopNonStop
     }
 
 
+    /**
+     * Gets page type from template's name
+     * @param $post
+     * @param int | null $pageID
+     * @return mixed
+     */
     function guessPageType($post, $pageID = null) {
         $id = $pageID ? $pageID : $post->ID;
         $template = get_page_template_slug($id);
@@ -611,6 +664,41 @@ class shopNonStop
         $type = str_replace('.php', '', str_replace('page-', '', str_replace('page_discount-', '', $template)));
 
         return $type;
+    }
+
+    public function getOffers() {
+        $my_wp_query = new WP_Query('post_type=page&posts_per_page=-1');
+
+        $all_wp_pages = $my_wp_query->posts;
+        $companies = array();
+        $offers = array();
+        foreach($all_wp_pages as $offer) {
+            if($this->guessPageType($offer->ID) == 'offer') {
+                $countdown = get_post_meta($offer->ID, "offer_expiration_date_time", true);
+                $now = new \DateTime('now');
+                $endTime = new DateTime($countdown);
+
+                if ($countdown && $now >= $endTime) continue;
+
+                $cName = get_the_title($offer->post_parent);
+
+                if($offer->post_parent) {
+                    $companies[$offer->post_parent] = $cName;
+                }
+
+                $offers[] = $offer;
+            }
+        }
+
+        usort($offers, array($this, 'offerSort'));
+
+        return $offers;
+    }
+
+    function offerSort( $a, $b ) {
+        $aVal = strtotime(get_post_meta($a->ID, "offer_expiration_date_time", true));
+        $bVal = strtotime(get_post_meta($b->ID, "offer_expiration_date_time", true));
+        return $aVal == $bVal ? 0 : ( $aVal > $bVal ) ? 1 : -1;
     }
 }
 

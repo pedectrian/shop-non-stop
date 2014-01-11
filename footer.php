@@ -13,16 +13,14 @@
 
 		</div><!-- #main -->
             <?php
-                if(isset($_COOKIE['gender'])) {
-                    $slug = $_COOKIE['gender'];
-                } else if (isset($_GET['gender']) && $_GET['gender'] == 'woman' || get_page_slug(true) == "woman") {
-                    $slug = "woman";
-                }
+                global $shop, $post;
+
+                $gender = $shop->getPageGender($post);
             ?>
-		<footer id="colophon" class="site-footer <?php echo isset($slug) ? 'footer-' . $slug : '';?> " role="contentinfo">
+		<footer id="colophon" class="site-footer <?php echo $gender ? 'footer-' . $gender : '';?> " role="contentinfo">
 			
 			<div class="site-info">
-                <?php if ($slug == "woman"): ?>
+                <?php if ($gender == "woman"): ?>
                     <div class='footer-woman-subscribe'>
                         <input type="text" class="custom-input" placeholder="Имя">
                         <input type="text" class="custom-input"  placeholder="Эл. почта">
@@ -39,7 +37,7 @@
                 </div>
 
                 <div class="rules">
-                    * Условия получения карты и актуальный размер скидки уточняйте непосредственно у компаний-партнеров (далее – «КП»). Скидки и специальные предложения действительны только при предъявлении карты. Карта действительна до конца 2014 года. Ответственность за достоверность предоставленной информации о скидках и специальных предложениях, действующих в КП, а также качество предоставляемых в КП услуг несут КП. Об инцидентах неисполнения КП заявленных обязательств просьба сообщать на info@shop-non-stop.com
+                    <?php echo get_option('sns_footer_text'); ?>
                 </div>
 			</div><!-- .site-info -->
 		</footer><!-- #colophon -->
@@ -77,45 +75,6 @@
                 
         </div>
     </div>
-    <script type="text/javascript">
-    
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-46771855-1']);
-    _gaq.push(['_trackPageview']);
-    
-    (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    
-    </script>
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript">
-    (function (d, w, c) {
-    (w[c] = w[c] || []).push(function() {
-    try {
-    w.yaCounter23522752 = new Ya.Metrika({id:23522752,
-    webvisor:true,
-    clickmap:true,
-    trackLinks:true,
-    accurateTrackBounce:true});
-    } catch(e) { }
-    });
-    
-    var n = d.getElementsByTagName("script")[0],
-    s = d.createElement("script"),
-    f = function () { n.parentNode.insertBefore(s, n); };
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
-    
-    if (w.opera == "[object Opera]") {
-    d.addEventListener("DOMContentLoaded", f, false);
-    } else { f(); }
-    })(document, window, "yandex_metrika_callbacks");
-    </script>
-    <noscript><div><img src="//mc.yandex.ru/watch/23522752" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+    <?php echo get_option('gaq_script'); ?>
 </body>
 </html>

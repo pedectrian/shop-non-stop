@@ -52,22 +52,11 @@
 <?php
 
     $gender = $shop->getPageGender($post);
-
     $slug = $shop->getPageSlug($post);
-
-
-    if($slug != $name) {
-        $description = get_page_description();
-    }
-
-    
-    function get_page_description() {
-        global $post;
-        
-        return $post->post_content;
-    }
-
     $type = $shop->guessPageType($post);
+
+    $title = $shop->getPageTitle();
+    $description = $shop->getPageDescription();
     $current_page = $post;
 ?>
 <body <?php body_class(); ?>>
@@ -75,7 +64,7 @@
         <?php $header = ($gender == $slug) ? 'header-' . $gender : 'header-' . $gender . '-' . $slug; ?>
 		<header id="masthead" class="site-header <?php echo $header;?> " role="banner">
 			<a class="home-link" href="<?php echo esc_url( home_url( '/' ) ); ?><?php echo $slug == 'woman' ? '/woman' :'';?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home">
-				<?php $logo = ($gender == "woman" || $gender == "man") ? $slug : ""; ?>
+				<?php $logo = ($gender == "woman" || $gender == "man") ? $gender : ""; ?>
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/<?php echo $logo ? $logo . '-' : '';?>logo.png" />
                 <div style="float: right;"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/header-slogan.png" /></div>
 			</a>
@@ -163,19 +152,13 @@
                        <a href="<?php echo '/' . $slug . '/' . $name . '#feedback'; ?>">Обратная связь</a>
                     </div>
                 </div>
-            <?php elseif (!$type && $name != 'woman' && $name != 'discounts' && $name != 'dev') : ?>
-                <div class="breadcrumbs">
-                    <?php if(function_exists('bcn_display'))
-                    {
-                        bcn_display();
-                    }?>
-                </div>
+            <?php elseif (!$type && $slug != 'woman' && $slug != 'discounts' && $slug != 'dev') : ?>
                 <div class="news-info">
                     <div class="news-page-title faq-page-title">
                         <?php echo $current_page->post_title; ?>
                     </div>
                 </div>
-            <?php elseif (isset($description)) : ?>
+            <?php elseif (false && isset($description)) : ?>
                 <div class="breadcrumbs">
                     <?php if(function_exists('bcn_display'))
                     {
@@ -192,7 +175,7 @@
 			</div><!-- #navbar -->
             
 		</header><!-- #masthead -->
-        <?php if($showSelect) { ?>
+        <?php if(is_front_page()) : ?>
         <div class="gender-check">
             <div style="width: 1025px; margin: 0 auto;">
                 <div class="man-card">
@@ -207,5 +190,5 @@
                 </div>
             </div>
         </div>
-        <?php } ?>
+        <?php endif; ?>
 		<div id="main" class="site-main">

@@ -4,36 +4,9 @@ get_header(); ?>
     <div class="page-wrap">
         <div class="discounts">
             <?php
-                global $post;
-                $id = $post->ID;
-                $my_wp_query = new WP_Query('post_type=page&posts_per_page=-1');
-                function offerSort( $a, $b ) {
-                    $aVal = strtotime(get_post_meta($a->ID, "offer_expiration_date_time", true));
-                    $bVal = strtotime(get_post_meta($b->ID, "offer_expiration_date_time", true));
-                    return $aVal == $bVal ? 0 : ( $aVal > $bVal ) ? 1 : -1;
-                }
-                $all_wp_pages = $my_wp_query->posts;
-                $companies = array();
-                $offers = array();
-                foreach($all_wp_pages as $offer) {
-                    if(guessPageType($offer->ID) == 'offer') {
-                        $countdown = get_post_meta($offer->ID, "offer_expiration_date_time", true);
-                        $now = new \DateTime('now');
-                        $endTime = new DateTime($countdown);
-                        
-                        if ($countdown && $now >= $endTime) continue;
-                        
-                        $cName = get_the_title($offer->post_parent);
-                        
-                        if($offer->post_parent) {
-                            $companies[$offer->post_parent] = $cName;
-                        }
-                        
-                        $offers[] = $offer;
-                    }
-                }
+                global $shop, $post;
 
-                usort($offers, 'offerSort');
+                $offers = $shop->getOffers();
                 
                 foreach($offers as $offer) {
                     $countdown = get_post_meta($offer->ID, "offer_expiration_date_time", true);
