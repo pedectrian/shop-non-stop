@@ -638,6 +638,12 @@ class shopNonStop
         return $title ? $title : $post->post_title;
     }
 
+    public function getPageDescription($post) {
+        $description = get_post_meta($post->ID, "header_page_description", true);
+
+        return $description ? $description : $post->post_content;
+    }
+
     /**
      * Try to get gender from cookie or GET param
      * @return string | null

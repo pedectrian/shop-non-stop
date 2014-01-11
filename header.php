@@ -55,8 +55,8 @@
     $slug = $shop->getPageSlug($post);
     $type = $shop->guessPageType($post);
 
-    $title = $shop->getPageTitle();
-    $description = $shop->getPageDescription();
+    $title = $shop->getPageTitle($post);
+    $description = $shop->getPageDescription($post);
     $current_page = $post;
 ?>
 <body <?php body_class(); ?>>
@@ -68,7 +68,7 @@
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/images/<?php echo $logo ? $logo . '-' : '';?>logo.png" />
                 <div style="float: right;"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/header-slogan.png" /></div>
 			</a>
-            <?php if(($type || !is_front_page()) && function_exists('bcn_display')) : ?>
+            <?php if(($type || !is_front_page() ) && $slug != $gender && function_exists('bcn_display')) : ?>
                 <div class="breadcrumbs">
                     <?php bcn_display(); ?>
                 </div>
@@ -97,9 +97,9 @@
                                 echo '</div>';
                                 echo '<div class="company-right-col">';
                                     echo '<div class="company-title">';
-                                        echo $current_page->post_title;
+                                        echo $title;
                                     echo '</div>';
-                                    echo '<div class="company-description">' . $current_page->post_content . '</div>';
+                                    echo '<div class="company-description">' . $description . '</div>';
                                 echo '</div>';
                             echo '</div>';
                             
@@ -115,7 +115,7 @@
                         case "news":
                             echo '<div class="news-info">';
                             echo '<div class="news-page-title">';
-                                echo $current_page->post_title;
+                                echo $title;
                             echo '</div>';
                             echo '</div>';
                         
@@ -123,12 +123,7 @@
                     }
                 ?>
             <?php elseif (!$type && ($name=="news" || $name=="offers") ) : ?>
-                <div class="breadcrumbs">
-                    <?php if(function_exists('bcn_display'))
-                    {
-                        bcn_display();
-                    }?>
-                </div>
+
                 <div class="news-info">
                     <div class="news-page-title">
                        <?php echo $current_page->post_title; ?>
@@ -140,12 +135,6 @@
                     </div>
                 </div>
             <?php elseif (!$type && ($name=="faq") ) : ?>
-                <div class="breadcrumbs">
-                    <?php if(function_exists('bcn_display'))
-                    {
-                        bcn_display();
-                    }?>
-                </div>
                 <div class="news-info">
                     <div class="news-page-title faq-page-title">
                        <a class="current" href="<?php echo '/' . $slug . '/' . $name; ?>"><?php echo $current_page->post_title; ?></a>
@@ -158,13 +147,7 @@
                         <?php echo $current_page->post_title; ?>
                     </div>
                 </div>
-            <?php elseif (false && isset($description)) : ?>
-                <div class="breadcrumbs">
-                    <?php if(function_exists('bcn_display'))
-                    {
-                        bcn_display();
-                    }?>
-                </div>
+            <?php elseif ($slug == 'discounts') : ?>
                 <div class="woman-page-description">
                     <?php echo $description; ?>
                 </div>
