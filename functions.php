@@ -660,11 +660,10 @@ class shopNonStop
     /**
      * Gets page type from template's name
      * @param $post
-     * @param int | null $pageID
      * @return mixed
      */
-    function guessPageType($post, $pageID = null) {
-        $id = $pageID ? $pageID : $post->ID;
+    function guessPageType($post) {
+        $id = $post->ID;
         $template = get_page_template_slug($id);
 
         $type = str_replace('.php', '', str_replace('page-', '', str_replace('page_discount-', '', $template)));
@@ -672,14 +671,14 @@ class shopNonStop
         return $type;
     }
 
-    public function getOffers() {
+    public function getCompamiesAndOffers() {
         $my_wp_query = new WP_Query('post_type=page&posts_per_page=-1');
 
         $all_wp_pages = $my_wp_query->posts;
         $companies = array();
         $offers = array();
         foreach($all_wp_pages as $offer) {
-            if($this->guessPageType($offer->ID) == 'offer') {
+            if($this->guessPageType($offer) == 'offer') {
                 $countdown = get_post_meta($offer->ID, "offer_expiration_date_time", true);
                 $now = new \DateTime('now');
                 $endTime = new DateTime($countdown);
@@ -698,7 +697,7 @@ class shopNonStop
 
         usort($offers, array($this, 'offerSort'));
 
-        return $offers;
+        return array('offers' => $offers, 'companies' => $companies );
     }
 
     function offerSort( $a, $b ) {

@@ -3413,6 +3413,10 @@ body {
 .offer-block:nth-child(odd) {
     margin-right: 30px;
 }
+.offer-thumb {
+    width: 490px;
+    height: 350px;
+}
 .offer-thumb img {
     border-radius: 7px;
     -webkit-border-radius: 7px;

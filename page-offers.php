@@ -6,7 +6,9 @@ get_header(); ?>
             <?php
                 global $shop, $post;
 
-                $offers = $shop->getOffers();
+                $data = $shop->getCompamiesAndOffers();
+                $offers = $data['offers'];
+                $companies = $data['companies'];
                 
                 foreach($offers as $offer) {
                     $countdown = get_post_meta($offer->ID, "offer_expiration_date_time", true);
