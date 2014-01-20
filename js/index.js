@@ -1,4 +1,13 @@
 $(window).load(function(){
+
+    $('.wpcf7-form .orange-btn').on('click', function(){
+        window.setTimeout( hide_popup, 3000 )
+    })
+
+    function hide_popup(){
+        $('.wpcf7-response-output').fadeOut('slow');
+    };
+
     $('.bwWrapper').BlackAndWhite({
         hoverEffect : true, // default true
         // set the path to BnWWorker.js for a superfast implementation
