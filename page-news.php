@@ -3,7 +3,6 @@ get_header();
 global $shop, $post;
 
 $slug = $shop->getPageSlug($post);
-echo $slug;
 ?>
 
     <div class="page-wrap">
@@ -42,7 +41,6 @@ echo $slug;
                             echo '</a>';
                         echo '</div>';
                     }
-                    echo 1;
                 }
                 
                 echo "<input type='hidden' class='companies-holder' value='" . json_encode($companies) . "'>";
