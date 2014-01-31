@@ -1,8 +1,14 @@
 <?php
-get_header(); ?>
+get_header();
+global $shop, $post;
+
+$slug = $shop->getPageSlug($post);
+echo $slug;
+?>
 
     <div class="page-wrap">
         <div class="discounts">
+
             <?php
                 global $post;
                 $id = $post->ID;
@@ -12,7 +18,7 @@ get_header(); ?>
                 $companies = array();
                 
                 foreach($all_wp_pages as $page) {
-                    if(guessPageType($page->ID) == 'news') {
+                    if($slug == 'news') {
                         $newDate = new \DateTime($page->post_date);
                         $ex =  get_post_meta($page->ID, "news-preview", true);
                         $excerpt =  $ex ? $ex : get_excerpt_by_id($page->ID);
@@ -36,6 +42,7 @@ get_header(); ?>
                             echo '</a>';
                         echo '</div>';
                     }
+                    echo 1;
                 }
                 
                 echo "<input type='hidden' class='companies-holder' value='" . json_encode($companies) . "'>";
