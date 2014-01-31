@@ -2,7 +2,6 @@
 get_header();
 global $shop, $post;
 
-$slug = $shop->getPageSlug($post);
 ?>
 
     <div class="page-wrap">
@@ -17,7 +16,7 @@ $slug = $shop->getPageSlug($post);
                 $companies = array();
                 
                 foreach($all_wp_pages as $page) {
-                    if($slug == 'news') {
+                    if($shop->getPageSlug($page) == 'news') {
                         $newDate = new \DateTime($page->post_date);
                         $ex =  get_post_meta($page->ID, "news-preview", true);
                         $excerpt =  $ex ? $ex : get_excerpt_by_id($page->ID);
