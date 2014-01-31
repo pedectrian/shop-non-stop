@@ -2,7 +2,7 @@ $(window).load(function(){
 
     $('.wpcf7-form .orange-btn').on('click', function(){
         window.setTimeout( hide_popup, 3000 )
-    })
+    });
 
     function hide_popup(){
         $('.wpcf7-response-output').fadeOut('slow');
@@ -53,7 +53,7 @@ $(document).ready(function(){
 
     $('input, textarea').placeholder();
 
-    if($('.companies-holder') && $('.companies-filter')) {
+    if($('.companies-holder').length && $('.companies-filter').length) {
         var comps = $.parseJSON($('.companies-holder').val());
 
         $.each(comps, function(key, value) {

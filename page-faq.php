@@ -23,7 +23,8 @@ get_header(); ?>
                 } else {
                     el.show('slow');
                 }
-            })
+            });
+
             var url = document.location.href;
             var hash = url.substring(url.indexOf("#")+1);
             
